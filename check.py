@@ -31,16 +31,23 @@ def is_stream_online(url, quiet=False, wait=False):
 
     while True:
         heartbeat = send_heartbeat(video_id, api_key)
-        is_online = heartbeat['playabilityStatus']['status'] == 'OK'
+        status = heartbeat['playabilityStatus']
+        is_online = status['status'] == 'OK'
 
-        if not quiet and 'reason' in heartbeat['playabilityStatus']:
-            print(heartbeat['playabilityStatus']['reason'])
+        if not quiet:
+            if 'reason' in status:
+                print(status['reason'])
+            else:
+                print(status['status'])
 
         if not wait or is_online:
             return is_online
 
-        time.sleep(int(heartbeat['playabilityStatus']['liveStreamability']['liveStreamabilityRenderer']['pollDelayMs']) / 1000.0)
+        poll_delay = 5
+        if 'liveStreamability' in status:
+            poll_delay = int(status['liveStreamability']['liveStreamabilityRenderer']['pollDelayMs']) / 1000.0
 
+        time.sleep(poll_delay)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
