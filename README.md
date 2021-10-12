@@ -8,6 +8,8 @@ Usage: python3 ./check.py [options] <youtube url>
  -w, --wait   Keep polling until the stream starts, then exit
 ```
 
+The script will exit with code `0` if the stream is online. If used without `--wait`, will exit with code `2` if the stream is not online.
+
 ## Use case
 
 Automatically start downloading a live stream once it goes online
